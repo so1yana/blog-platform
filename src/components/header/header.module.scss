@@ -1,0 +1,61 @@
+.header {
+    background-color: #fff;
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    box-shadow: 0 -6px 12px rgba(0, 0, 0, 0.2);
+    height: 80px;
+    margin-bottom: 26px;
+    align-items: center;
+}
+
+.header__title {
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 28px;
+    letter-spacing: 0.5px;
+    margin-left: 22px;
+}
+
+.header__buttons {
+    margin-right: 22px;
+}
+
+.button {
+    background-color: inherit;
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    outline: none;
+    font-size: 18px;
+    color: black;
+    line-height: 28px;
+    width: 109px;
+    height: 51px;
+}
+
+.button__sign-in {
+    position: relative;
+    margin-right: 16px;
+    border: 1px solid;
+    border-color: rgba(0, 0, 0, 0);
+    transition: border 0.2s;
+}
+
+.button__sign-up {
+    border: 1px solid #52c41a;
+    color: #52c41a;
+    transition:
+        color 0.4s,
+        background 0.2s;
+}
+
+.button__sign-in:hover {
+    border-color: black;
+}
+
+.button__sign-up:hover {
+    color: white;
+    background-color: #52c41a;
+}

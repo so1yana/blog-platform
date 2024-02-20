@@ -1,0 +1,110 @@
+.heart {
+    cursor: pointer;
+    color: transparent;
+    stroke: black;
+    color: white;
+    user-select: none;
+}
+
+.heart:hover {
+    stroke: red;
+}
+
+.heart.liked {
+    color: red;
+    stroke: red;
+}
+
+.article {
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    max-width: 938px;
+    min-width: 320px;
+    max-height: 108px;
+    margin: 0 auto 26px;
+    background-color: #fff;
+    padding: 16px;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.article__body {
+    display: flex;
+    flex-direction: column;
+    max-width: 680px;
+    overflow: hidden;
+}
+
+.article__title {
+    display: flex;
+    margin-bottom: 4px;
+    align-items: center;
+}
+
+.artice__title-text {
+    color: #1890ff;
+    font-size: 20px;
+    font-weight: normal;
+    margin-right: 16px;
+}
+
+.artice__title-likes {
+    position: relative;
+    margin-left: 4px;
+    font-size: 12px;
+    line-height: 22px;
+    align-self: center;
+}
+
+.article__tags {
+    display: flex;
+    margin-bottom: 8px;
+}
+
+.article__tag {
+    border: 1px solid black;
+    border-radius: 3px;
+    font-size: 12px;
+    height: 20px;
+    margin-right: 8px;
+    text-align: center;
+    line-height: 19px;
+    padding: 0 4px;
+}
+
+.article__text {
+    font-size: 12px;
+    word-wrap: break-word;
+    line-height: 22px;
+}
+
+.article__author {
+    display: flex;
+}
+
+.article__author-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.article__author-name {
+    font-size: 18px;
+    font-weight: normal;
+    align-self: flex-end;
+}
+
+.article__date {
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.5);
+    line-height: 22px;
+    align-self: flex-end;
+}
+
+.article__author-avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    margin-left: 12px;
+}
