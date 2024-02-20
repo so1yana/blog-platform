@@ -1,0 +1,60 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "extends": ["airbnb", "prettier"],
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "plugins": ["import", "jsx-a11y", "prettier", "react-hooks"],
+    "rules": {
+        "import/no-extraneous-dependencies": ["off"],
+        "class-methods-use-this": "off",
+        "arrow-parens": "off", // Несовместимо с prettier
+        "object-curly-newline": "off", // Несовместимо с prettier
+        "no-mixed-operators": "off", // Несовместимо с prettier
+        "arrow-body-style": "off", // Это - не наш стиль?
+        "function-paren-newline": "off", // Несовместимо с prettier
+        "no-plusplus": "off",
+        "space-before-function-paren": 0, // Несовместимо с prettier
+        "jsx-a11y/no-autofocus": "off",
+        "max-len": ["error", 100, 2, { "ignoreUrls": true }], // airbnb позволяет некоторые пограничные случаи
+        "no-console": "off", // airbnb использует предупреждение
+        "no-alert": "error", // airbnb использует предупреждение
+        "no-constant-condition": "off",
+        "no-param-reassign": "off", // Это - не наш стиль?
+        "radix": "off", // parseInt, parseFloat и radix выключены. Мне это не нравится.
+        "jsx-a11y/click-events-have-key-events": "off",
+        "jsx-a11y/no-static-element-interactions": "off",
+
+        "react/require-default-props": "off",
+        "react/forbid-prop-types": "off",
+        "react/jsx-filename-extension": ["error", { "extensions": [".js"] }],
+
+        "prefer-destructuring": "off",
+
+        "react/no-find-dom-node": "off",
+        "react/no-did-mount-set-state": "off",
+        "react/no-unused-prop-types": "off",
+        "react/jsx-one-expression-per-line": "off",
+        "jsx-a11y/label-has-for": "off",
+
+        "react/state-in-constructor": 0,
+        "jsx-a11y/label-has-associated-control": 0,
+        "react/react-in-jsx-scope": "off",
+        "react/prop-types": 0,
+        "indent": ["error", 4],
+        "prettier/prettier": "off",
+        "linebreak-style": [0, "unix"],
+        "quotes": ["error", "single"],
+        "import/no-unresolved": [2, { "caseSensitive": false }],
+        "import/order": [
+            "error",
+            {
+                "groups": ["builtin", "external", "internal", "parent", "sibling", "index"]
+            }
+        ]
+    }
+}
