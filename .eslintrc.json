@@ -45,7 +45,7 @@
         "jsx-a11y/label-has-associated-control": 0,
         "react/react-in-jsx-scope": "off",
         "react/prop-types": 0,
-        "indent": ["error", 4],
+        "indent": ["error", 4, { "SwitchCase": 1 }],
         "prettier/prettier": "off",
         "linebreak-style": [0, "unix"],
         "quotes": ["error", "single"],
