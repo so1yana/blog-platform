@@ -1,0 +1,63 @@
+.heart {
+    cursor: pointer;
+    color: transparent;
+    stroke: black;
+    color: white;
+    user-select: none;
+    min-width: 20px;
+    min-height: 20px;
+}
+
+.heart > path {
+    min-width: 20px;
+    min-height: 20px;
+}
+
+.heart:hover {
+    stroke: red;
+}
+
+.heart.liked {
+    color: red;
+    stroke: red;
+}
+
+.card {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px;
+    width: 906px;
+    margin: 0 auto 16px;
+    background-color: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 96px;
+}
+
+.card__title {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.card__title-text {
+    overflow-wrap: anywhere;
+    color: #1890ff;
+    font-size: 20px;
+    font-weight: normal;
+    margin-right: 16px;
+}
+
+.card__description {
+    color: rgba(0, 0, 0, 0.5);
+    font-size: 12px;
+    line-height: 22px;
+    margin-bottom: 26px;
+    margin-top: 8px;
+    overflow-wrap: anywhere;
+}
+
+.card__text {
+    font-size: 16px;
+    line-height: 22px;
+    margin-bottom: 32px;
+}
