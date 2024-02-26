@@ -22,14 +22,16 @@ export default function BlogListItem({ item }) {
     const normalizedBody = stripText(body, 180);
     const normalizedDate = format(new Date(createdAt), 'LLLL dd, yyyy');
     return (
-        <Link to={`/article/${slug}`}>
+        <Link style={{ height: 140, marginBottom: 26 }} to={`/article/${slug}`}>
             <li className={classes.article}>
                 <div className={classes.article__body}>
                     <div className={classes.article__title}>
                         <h3 className={classes['artice__title-text']}>{normalizedTitle}</h3>
                         <svg
                             className={`${classes.heart}`}
-                            onClick={() => {}}
+                            onClick={(e) => {
+                                e.preventDefault();
+                            }}
                             width="20"
                             height="20"
                             viewBox="0 0 24 24"
