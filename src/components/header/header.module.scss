@@ -30,6 +30,17 @@
 }
 
 .header__buttons {
+    margin-right: calc(-1 * (100vw - 100%));
+    overflow: hidden;
+}
+
+.header__image-button {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    background: none;
+    border: none;
+    outline: none;
     margin-right: 22px;
 }
 
@@ -60,14 +71,45 @@
     transition:
         color 0.4s,
         background 0.2s;
-    margin-right: 16px;
+    margin-right: 32px;
 }
 
 .button__sign-in:hover {
     border-color: black;
 }
 
-.button__sign-up:hover {
+.button__log-out {
+    border: 1px solid #000;
+    color: #000;
+    transition:
+        color 0.4s,
+        background 0.2s,
+        border 0.2s;
+    margin-right: 32px;
+}
+
+.button__sign-up:hover,
+.button__log-out:hover {
     color: white;
     background-color: #52c41a;
+}
+
+.button__log-out:hover {
+    border: 1px solid #52c41a;
+}
+
+.header__user {
+    display: 'flex';
+    flex-direction: 'row';
+    align-items: 'center';
+}
+
+.header__username {
+    margin-right: 12px;
+}
+
+.header__image {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
 }
