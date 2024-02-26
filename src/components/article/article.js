@@ -22,14 +22,18 @@ function Article() {
                 {(art) => {
                     const { author, body, createdAt, description, favoritesCount, tagList, title } =
                         art.article;
-                    const normalizedTags = tagList.map((tag) => (
-                        <p
-                            key={`${tag}${(Math.random() + 15) * (Math.random() + 15) * 123}`}
-                            className={articleClass.article__tag}
-                        >
-                            {stripText(tag, 20)}
-                        </p>
-                    ));
+                    const normalizedTags = tagList.map((tag, id) => {
+                        if (id === 7) return '...';
+                        if (id > 7) return null;
+                        return (
+                            <p
+                                key={`${tag}${(Math.random() + 15) * (Math.random() + 15) * 123}`}
+                                className={articleClass.article__tag}
+                            >
+                                {tag ? stripText(tag, 8) : ''}
+                            </p>
+                        );
+                    });
                     const normalizedDate = format(new Date(createdAt), 'LLLL dd, yyyy');
                     return (
                         <div className={cardClass.card}>
