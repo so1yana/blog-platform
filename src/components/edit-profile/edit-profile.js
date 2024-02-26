@@ -57,14 +57,7 @@ export default function EditProfile() {
         const regex =
             // eslint-disable-next-line max-len
             /(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z0-9]{2,}(\.[a-zA-Z0-9]{2,})(\.[a-zA-Z0-9]{2,})?/;
-        if (
-            imageRef.current.value.length &&
-            !imageRef.current.value.toLowerCase().match(
-                // eslint-disable-next-line max-len
-                // /[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)/gi,
-                regex,
-            )
-        ) {
+        if (imageRef.current.value.length && !imageRef.current.value.toLowerCase().match(regex)) {
             isAllGood = false;
             setImage(false);
         }
@@ -78,24 +71,18 @@ export default function EditProfile() {
             if (passwordRef.current.value.length)
                 userPost.user.password = passwordRef.current.value;
             if (imageRef.current.value.length) userPost.user.image = imageRef.current.value;
-            updateUser(token, userPost)
-                .then((response) => {
-                    return response.json();
-                })
-                .then((response) => {
-                    console.log(response);
-                    if (Object.prototype.hasOwnProperty.call(response, 'errors'))
-                        setMessage(response);
-                    else {
-                        dispatch(setUserData(response));
-                        navigate(
-                            // eslint-disable-next-line max-len
-                            `/profile?username=${response.user.username}&mail=${response.user.email}&img=${response.user.image}`,
-                        );
-                        setMessage(response);
-                        passwordRef.current.value = '';
-                    }
-                });
+            updateUser(token, userPost).then((response) => {
+                if (Object.prototype.hasOwnProperty.call(response, 'errors')) setMessage(response);
+                else {
+                    dispatch(setUserData(response));
+                    navigate(
+                        // eslint-disable-next-line max-len
+                        `/profile?username=${response.user.username}&mail=${response.user.email}&img=${response.user.image}`,
+                    );
+                    setMessage(response);
+                    passwordRef.current.value = '';
+                }
+            });
         }
     };
 
