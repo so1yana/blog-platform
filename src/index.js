@@ -1,5 +1,4 @@
 import { Tuple, configureStore } from '@reduxjs/toolkit';
-import { BrowserRouter } from 'react-router-dom';
 import { thunk } from 'redux-thunk';
 import { Provider } from 'react-redux';
 import React from 'react';
@@ -12,9 +11,9 @@ const store = configureStore({ reducer, middleware: () => new Tuple(thunk) });
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <Provider store={store}>
-        <BrowserRouter>
+    <React.StrictMode>
+        <Provider store={store}>
             <App />
-        </BrowserRouter>
-    </Provider>,
+        </Provider>
+    </React.StrictMode>,
 );
