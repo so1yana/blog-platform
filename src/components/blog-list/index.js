@@ -1,3 +1,4 @@
-import List from './blog-list';
+import BlogList, { blogLoader } from './blog-list';
 
-export default List;
+export default BlogList;
+export { blogLoader };
