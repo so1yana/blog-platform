@@ -1,0 +1,22 @@
+:where(.css-dev-only-do-not-override-1xg9z9n).ant-pagination .ant-pagination-item {
+    height: 30px;
+    min-width: 30px;
+    border: none;
+}
+
+:where(.css-dev-only-do-not-override-1xg9z9n).ant-pagination .ant-pagination-item-active a {
+    color: #fff;
+}
+
+:where(.css-dev-only-do-not-override-1xg9z9n).ant-pagination .ant-pagination-item-active {
+    background-color: #1890ff;
+    font-weight: 500;
+}
+
+:where(.css-dev-only-do-not-override-1xg9z9n).ant-pagination .ant-pagination-jump-prev,
+:where(.css-dev-only-do-not-override-1xg9z9n).ant-pagination .ant-pagination-jump-next {
+    height: 30px;
+    min-width: 30px;
+    line-height: 30px;
+    text-align: center;
+}
