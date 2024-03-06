@@ -26,6 +26,7 @@ function Article() {
     const navigate = useNavigate();
 
     useEffect(() => {
+        console.log(article);
         article
             .then((response) => {
                 if (likesCount !== response.article.favoritesCount)
@@ -34,7 +35,7 @@ function Article() {
                     setHeartClasses([articleClass.heart, articleClass.liked]);
                 else setHeartClasses([articleClass.heart]);
             })
-            .catch(() => {});
+            .catch((e) => console.log(e));
     }, [article]);
 
     return (
@@ -210,17 +211,11 @@ function Article() {
     );
 }
 
-async function getArticleItem(slug, token) {
-    const result = await getArticle(slug, token);
-
-    return result;
-}
-
 const articleLoader = async ({ params, context: token }) => {
     const { slug } = params;
 
     return defer({
-        article: getArticleItem(slug, token),
+        article: getArticle(slug, token),
     });
 };
 
