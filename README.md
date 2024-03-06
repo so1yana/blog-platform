@@ -1,1 +1,1 @@
-# <blog-platform-hazel-psi.vercel.app>
+# blog-platform-hazel-psi.vercel.app
