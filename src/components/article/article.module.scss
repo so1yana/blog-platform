@@ -24,6 +24,7 @@
 
 .card {
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
     padding: 16px;
     width: 906px;
@@ -51,7 +52,6 @@
     color: rgba(0, 0, 0, 0.5);
     font-size: 12px;
     line-height: 22px;
-    margin-bottom: 26px;
     margin-top: 8px;
     overflow-wrap: anywhere;
 }
