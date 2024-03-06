@@ -68,18 +68,16 @@ export default function BlogList() {
     );
 }
 
-async function getPosts(page) {
-    const result = await getArticles(page * 5 - 5, page || 1);
+async function getPosts(page, token) {
+    const result = await getArticles(page * 5 - 5, token);
 
     return result;
 }
 
-const blogLoader = async ({ params }) => {
+export const blogLoader = async ({ params, context: token }) => {
     const { page } = params;
 
     return defer({
-        articles: getPosts(page),
+        articles: getPosts(page, token),
     });
 };
-
-export { blogLoader };
