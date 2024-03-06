@@ -12,7 +12,7 @@
     left: 0;
     right: 0;
     top: 0;
-    z-index: 10;
+    z-index: 9999;
 }
 
 .header__title {
@@ -32,6 +32,7 @@
 .header__buttons {
     margin-right: calc(-1 * (100vw - 100%));
     overflow: hidden;
+    display: flex;
 }
 
 .header__image-button {
@@ -59,7 +60,6 @@
 
 .button__sign-in {
     position: relative;
-    margin-right: 16px;
     border: 1px solid;
     border-color: rgba(0, 0, 0, 0);
     transition: border 0.2s;
@@ -89,7 +89,8 @@
 }
 
 .button__sign-up:hover,
-.button__log-out:hover {
+.button__log-out:hover,
+.header__article-button:hover {
     color: white;
     background-color: #52c41a;
 }
@@ -112,4 +113,16 @@
     width: 46px;
     height: 46px;
     border-radius: 50%;
+}
+
+.header__article-button {
+    border: 1px solid #52c41a;
+    color: #52c41a;
+    transition:
+        color 0.2s,
+        background 0.2s;
+    margin-right: 32px;
+    height: 31px;
+    font-size: 14px;
+    font-weight: 300;
 }
