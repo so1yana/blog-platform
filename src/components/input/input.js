@@ -10,7 +10,7 @@ import classes from './input.module.scss';
 // };
 
 const Input = forwardRef((props, ref) => {
-    const { type, defaultValue, placeholder, autofocus, onChange, id, name } = props;
+    const { type, defaultValue, placeholder, autofocus, onChange, id, name, style, value } = props;
 
     return (
         <input
@@ -18,11 +18,13 @@ const Input = forwardRef((props, ref) => {
             ref={ref}
             name={name}
             className={classes.input}
-            type={type}
+            type={type || 'text'}
             defaultValue={defaultValue}
+            value={value}
             placeholder={placeholder}
             autoFocus={autofocus}
             onChange={onChange}
+            style={style}
         />
     );
 });
