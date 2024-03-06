@@ -80,6 +80,7 @@ function Article() {
                                         <svg
                                             className={heartClasses.join(' ')}
                                             onClick={() => {
+                                                if (!token) return;
                                                 likeArticle(
                                                     token,
                                                     slug,

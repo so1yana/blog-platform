@@ -43,6 +43,7 @@ export default function BlogListItem({ item }) {
                             className={heartClasses.join(' ')}
                             onClick={(e) => {
                                 e.preventDefault();
+                                if (!token) return;
                                 likeArticle(token, slug, !(heartClasses.length > 1)).then(
                                     (response) => {
                                         if (
