@@ -19,6 +19,12 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
+label > input,
+label > textarea,
+label > div {
+    margin-top: 5px;
+}
+
 h1,
 h2,
 h3,
@@ -31,10 +37,15 @@ button {
 }
 
 a {
+    display: block;
     text-decoration: none;
     color: inherit;
 }
 
 code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+#root {
+    position: relative;
 }
