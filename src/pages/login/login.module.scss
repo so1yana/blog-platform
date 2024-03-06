@@ -1,0 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+label {
+    font-size: 14px;
+    font-family: 'Roboto', sans-serif;
+    color: #262626;
+    margin-top: 12px;
+}
+
+.login-page {
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 384px;
+    margin: 126px auto 0;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+
+.login-page__title {
+    font-family: 'Roboto', sans-serif;
+    margin-top: 48px;
+    margin-bottom: 22px;
+    font-size: 20px;
+    font-weight: normal;
+    color: #262626;
+}
+
+.login-page__button {
+    cursor: pointer;
+    background-color: #1890ff;
+    color: #fff;
+    font-size: 16px;
+    width: 319px;
+    height: 40px;
+    border: none;
+    border-radius: 4px;
+    outline: none;
+    margin-top: 22px;
+    margin-bottom: 8px;
+    transition:
+        box-shadow 0.2s,
+        font-size 0.2s;
+}
+
+.login-page__button:hover {
+    font-size: 15px;
+    box-shadow: 0 0 16px rgba(0, 0, 0, 0.3);
+}
+
+.login-page__register {
+    font-family: 'Roboto', sans-serif;
+    font-size: 12px;
+    margin-bottom: 48px;
+    color: #8c8c8c;
+}
+
+.register-page__error-message {
+    font-size: 12px;
+    color: red;
+    margin-top: 2px;
+}
+
+.login-page__register a {
+    color: #1890ff;
+}

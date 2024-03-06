@@ -1,0 +1,40 @@
+.new-article {
+    width: 874px;
+    padding: 48px 32px;
+    margin: 126px auto;
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.new-article__title {
+    font-family: 'Roboto', sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 28px;
+    margin-bottom: 9px;
+}
+
+.textarea {
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    width: 842px;
+    min-height: 136px;
+    border: none;
+    display: block;
+    overflow: hidden;
+    resize: none;
+    outline: 1px solid #d9d9d9;
+    border-radius: 4px;
+    padding: 16px;
+}
+
+.tag-container {
+    display: flex;
+    justify-content: left;
+    height: 40px;
+    margin-bottom: 9px;
+}
