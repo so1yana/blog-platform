@@ -6,13 +6,18 @@
     user-select: none;
 }
 
+.heart.liked {
+    color: red;
+    stroke: red;
+}
+
 .heart:hover {
     stroke: red;
 }
 
-.heart.liked {
-    color: red;
-    stroke: red;
+.heart.liked:hover {
+    color: white;
+    stroke: black;
 }
 
 .article {
@@ -92,6 +97,7 @@
 
 .article__author {
     display: flex;
+    justify-content: flex-end;
 }
 
 .article__author-info {
