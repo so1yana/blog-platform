@@ -1,5 +1,8 @@
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { likeArticle } from '../../api';
 import classes from './blog-list-item.module.scss';
 
 const stripText = (text, count) => {
@@ -9,16 +12,25 @@ const stripText = (text, count) => {
 };
 
 export default function BlogListItem({ item }) {
-    const { title, tagList, body, favoritesCount, createdAt, author, slug } = item;
-    const normalizedTags = tagList.map((tag) => (
-        <p
-            key={`${tag}${(Math.random() + 15) * (Math.random() + 15) * 123}`}
-            className={classes.article__tag}
-        >
-            {stripText(tag, 10)}
-        </p>
-    ));
-    const normalizedTitle = stripText(title, 30);
+    const { title, tagList, body, favoritesCount, createdAt, author, slug, favorited } = item;
+    const getToken = (state) => state.userData.token;
+    const token = useSelector(getToken);
+    const [likesCount, setLikes] = useState(favoritesCount || 0);
+    const [heartClasses, setHeartClasses] = useState(
+        !favorited ? [classes.heart] : [classes.heart, classes.liked],
+    );
+    const normalizedTags = tagList.map((tag, index) => {
+        if (index >= 6) return null;
+        return (
+            <p
+                key={`${tag}${(Math.random() + 15) * (Math.random() + 15) * 123}`}
+                className={classes.article__tag}
+            >
+                {stripText(tag, 10)}
+            </p>
+        );
+    });
+    const normalizedTitle = stripText(title, 45);
     const normalizedBody = stripText(body, 180);
     const normalizedDate = format(new Date(createdAt), 'LLLL dd, yyyy');
     return (
@@ -28,9 +40,28 @@ export default function BlogListItem({ item }) {
                     <div className={classes.article__title}>
                         <h3 className={classes['artice__title-text']}>{normalizedTitle}</h3>
                         <svg
-                            className={`${classes.heart}`}
+                            className={heartClasses.join(' ')}
                             onClick={(e) => {
                                 e.preventDefault();
+                                likeArticle(token, slug, !(heartClasses.length > 1)).then(
+                                    (response) => {
+                                        if (
+                                            Object.prototype.hasOwnProperty.call(
+                                                response,
+                                                'article',
+                                            )
+                                        ) {
+                                            const isLiked = response.article.favorited;
+                                            if (isLiked) {
+                                                setLikes(likesCount + 1);
+                                                setHeartClasses([classes.heart, classes.liked]);
+                                            } else {
+                                                setLikes(likesCount - 1);
+                                                setHeartClasses([classes.heart]);
+                                            }
+                                        }
+                                    },
+                                );
                             }}
                             width="20"
                             height="20"
@@ -45,9 +76,7 @@ export default function BlogListItem({ item }) {
                                 fill="currentColor"
                             />
                         </svg>
-                        <span
-                            className={classes['artice__title-likes']}
-                        >{`${favoritesCount}`}</span>
+                        <span className={classes['artice__title-likes']}>{`${likesCount}`}</span>
                     </div>
                     <div className={classes.article__tags}>{normalizedTags}</div>
                     <p className={classes.article__text}>{normalizedBody}</p>
