@@ -32,10 +32,9 @@
 
         "react/require-default-props": "off",
         "react/forbid-prop-types": "off",
-        "react/jsx-filename-extension": ["error", { "extensions": [".js"] }],
+        "react/jsx-filename-extension": ["error", { "extensions": [".js", ".jsx"] }],
 
         "prefer-destructuring": "off",
-
         "react/no-find-dom-node": "off",
         "react/no-did-mount-set-state": "off",
         "react/no-unused-prop-types": "off",
