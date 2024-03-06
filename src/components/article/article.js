@@ -26,13 +26,15 @@ function Article() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        article.then((response) => {
-            if (likesCount !== response.article.favoritesCount)
-                setLikes(response.article.favoritesCount);
-            if (response.article.favorited && heartClasses.length < 2)
-                setHeartClasses([articleClass.heart, articleClass.liked]);
-            else setHeartClasses([articleClass.heart]);
-        });
+        article
+            .then((response) => {
+                if (likesCount !== response.article.favoritesCount)
+                    setLikes(response.article.favoritesCount);
+                if (response.article.favorited && heartClasses.length < 2)
+                    setHeartClasses([articleClass.heart, articleClass.liked]);
+                else setHeartClasses([articleClass.heart]);
+            })
+            .catch(() => {});
     }, [article]);
 
     return (
