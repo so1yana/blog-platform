@@ -2,6 +2,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useCallback, useEffect } from 'react';
 import { clearToken, setUserData } from '../../actions/api';
+import Button from '../button';
 import replaceImage from '../../assets/avatarDef.png';
 import classes from './header.module.scss';
 
@@ -42,6 +43,14 @@ export default function Header() {
             <div className={classes.header__buttons}>
                 {token && (
                     <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                        <Link to="/new-article">
+                            <Button
+                                classList="green transparent"
+                                style={{ height: 31, width: 112, marginRight: 32, marginLeft: 5 }}
+                            >
+                                Create article
+                            </Button>
+                        </Link>
                         <button
                             className={classes['header__image-button']}
                             type="button"
@@ -56,18 +65,22 @@ export default function Header() {
                                 src={image || replaceImage}
                             />
                         </button>
-                        <button
-                            className={`${classes.button} ${classes['button__log-out']}`}
-                            type="button"
+                        <Button
+                            style={{ marginRight: 32, width: 109, height: 51, fontSize: 18 }}
                             onClick={() => dispatch(clearToken())}
+                            classList="black transparent"
                         >
                             Log out
-                        </button>
+                        </Button>
                     </div>
                 )}
                 {!token && (
                     <>
-                        <Link to="/login" state={{ from: location }}>
+                        <Link
+                            to="/login"
+                            state={{ from: location }}
+                            style={{ display: 'block', maxWidth: 109, marginRight: 16 }}
+                        >
                             <button
                                 className={`${classes.button} ${classes['button__sign-in']}`}
                                 type="button"
@@ -75,7 +88,10 @@ export default function Header() {
                                 Sign in
                             </button>
                         </Link>
-                        <Link to="/register">
+                        <Link
+                            to="/register"
+                            style={{ display: 'block', maxWidth: 109, marginRight: 32 }}
+                        >
                             <button
                                 className={`${classes.button} ${classes['button__sign-up']}`}
                                 type="button"
