@@ -1,14 +1,6 @@
 import { forwardRef } from 'react';
 import classes from './input.module.scss';
 
-// const defaultProps = {
-//     type: 'text',
-//     defaultValue: '',
-//     placeholder: '',
-//     autofocus: false,
-//     onChange: () => {},
-// };
-
 const Input = forwardRef((props, ref) => {
     const { type, defaultValue, placeholder, autofocus, onChange, id, name, style, value } = props;
 
