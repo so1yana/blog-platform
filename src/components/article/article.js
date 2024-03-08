@@ -26,7 +26,6 @@ function Article() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        console.log(article);
         article
             .then((response) => {
                 if (likesCount !== response.article.favoritesCount)
@@ -35,13 +34,14 @@ function Article() {
                     setHeartClasses([articleClass.heart, articleClass.liked]);
                 else setHeartClasses([articleClass.heart]);
             })
-            .catch((e) => console.log(e));
+            .catch(() => {});
     }, [article]);
 
     return (
         <Suspense fallback={<ArticleSkeleton />}>
-            <Await resolve={article} errorElement={<NotFoundPage />}>
+            <Await resolve={article}>
                 {(art) => {
+                    if (!art?.article) return <NotFoundPage />;
                     const { author, body, createdAt, description, tagList, title, slug } =
                         art.article;
                     const normalizedTags = tagList.map((tag, id) => {
