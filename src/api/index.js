@@ -16,10 +16,9 @@ const getArticles = async (offset = 0, token = null) => {
     return result;
 };
 
-// eslint-disable-next-line default-param-last
 export const getArticle = async (slug, token = null) => {
-    const options = { headers: { Authorization: `Token ${token}` } };
-    if (!token) options.headers = null;
+    let options = { headers: { Authorization: `Token ${token}` } };
+    if (!token) options = null;
     const result = await fetch(`https://blog.kata.academy/api/articles/${slug}`, options)
         .then((response) => {
             if (response.status !== 200) {
