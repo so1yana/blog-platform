@@ -2,7 +2,7 @@ import { forwardRef } from 'react';
 import classes from './button.module.scss';
 
 const Button = forwardRef((props, ref) => {
-    const { onClick, style, children, classList, type } = props;
+    const { onClick, style, children, classList, type, disabled } = props;
     const classesList =
         classList?.split(' ').map((el) => {
             return classes[el];
@@ -15,6 +15,7 @@ const Button = forwardRef((props, ref) => {
             type={!type ? 'button' : 'submit'}
             onClick={onClick}
             style={style}
+            disabled={disabled}
         >
             {children}
         </button>

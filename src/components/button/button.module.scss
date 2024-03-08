@@ -37,6 +37,33 @@
     background-color: transparent;
 }
 
+.blue.disabled {
+    background-color: #105ca3;
+}
+
+.disabled::before {
+    content: '';
+    vertical-align: middle;
+    margin-right: 8px;
+    width: 15px;
+    height: 15px;
+    border: 3px solid #fff;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
 .blue.transparent {
     color: #1890ff;
 }
@@ -47,6 +74,12 @@
 
 .green.transparent {
     color: #52c41a;
+}
+
+.blue.disabled:hover {
+    cursor: default;
+    background-color: #105ca3;
+    box-shadow: none;
 }
 
 .red.transparent:hover {
