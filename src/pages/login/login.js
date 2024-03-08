@@ -3,19 +3,20 @@ import { useState, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { token } from '../../actions/api';
 import Input from '../../components/input';
+import Button from '../../components/button';
 import classes from './login.module.scss';
 
 export default function Login() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
-    const fromPage = location.state?.from?.pathname || '/';
+    const fromPage = `${location.state?.from?.pathname}${location.state?.from?.search}` || '/';
     const emailRef = useRef();
     const passwordRef = useRef();
     const [isMail, setEmail] = useState(true);
     const [isPassword, setPassword] = useState(true);
     const [message, setMessage] = useState(null);
-    const [isLoading, setLoading] = useState(false);
+    const [isPending, setPending] = useState(false);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -34,7 +35,7 @@ export default function Login() {
             setPassword(false);
         }
         if (isAllGood) {
-            setLoading(true);
+            setPending(true);
             const userPost = {
                 user: {
                     email: emailRef.current.value,
@@ -50,7 +51,7 @@ export default function Login() {
             })
                 .then((response) => response.json())
                 .then((response) => {
-                    setLoading(false);
+                    setPending(false);
                     if (Object.prototype.hasOwnProperty.call(response, 'errors')) {
                         setMessage(response.errors);
                     } else {
@@ -102,9 +103,14 @@ export default function Login() {
                 {message && (
                     <p className={classes['register-page__error-message']}>Write correct data</p>
                 )}
-                <button className={classes['login-page__button']} type="submit">
-                    {isLoading ? 'Loading...' : 'Login'}
-                </button>
+                <Button
+                    classList={`blue ${isPending && 'disabled'}`}
+                    style={{ width: 319, height: 40, marginTop: 21, marginBottom: 12 }}
+                    type="submit"
+                    disabled={isPending}
+                >
+                    {isPending ? 'Loggin in...' : 'Login'}
+                </Button>
                 <p className={classes['login-page__register']}>
                     Don’t have an account?{' '}
                     <Link style={{ display: 'inline' }} to="/register">

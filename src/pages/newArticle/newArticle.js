@@ -41,6 +41,7 @@ export default function NewArticle() {
     const [titleMessage, setTitleMessage] = useState(null);
     const [descriptionMessage, setDescriptionMessage] = useState(null);
     const [bodyMessage, setBodyMessage] = useState(null);
+    const [isPending, setPending] = useState(false);
     const params = useParams();
     const componentType = params?.slug ? 'update' : 'new';
 
@@ -119,6 +120,8 @@ export default function NewArticle() {
         };
         if (tagsArray.length) requestBody.article.tagList = tagsArray;
         if (!isAllGood) return;
+        setPopup(false);
+        setPending(true);
         const request =
             componentType === 'new'
                 ? createArticle(token, requestBody)
@@ -127,7 +130,7 @@ export default function NewArticle() {
             setServerMessage(response);
             const responseWord = componentType === 'new' ? 'created' : 'updated';
             if (Object.prototype.hasOwnProperty.call(response, 'article')) {
-                setPopupMessage(`Article successfully ${responseWord}!\nRedirected in 5 seconds`);
+                setPopupMessage(`Article successfully ${responseWord}!\nRedirecting in 5 seconds`);
                 setPopupType('good');
                 setPopup(true);
             }
@@ -135,6 +138,7 @@ export default function NewArticle() {
                 setPopupMessage('Access forbidden.');
                 setPopupType('bad');
                 setPopup(true);
+                setPending(false);
             }
         });
     };
@@ -167,7 +171,7 @@ export default function NewArticle() {
                 titleRef.current.value = page.title;
                 descriptionRef.current.value = page.description;
                 bodyRef.current.value = page.body;
-                setTags(page.tagList);
+                setTags(page.tagList.length ? page.tagList : ['']);
                 handleTextAreaInput(bodyRef);
             }
         }
@@ -253,10 +257,11 @@ export default function NewArticle() {
                 </label>
                 <Button
                     type="submit"
-                    classList="blue"
+                    classList={`blue ${isPending && 'disabled'}`}
                     style={{ alignSelf: 'start', height: 40, width: 319 }}
+                    disabled={isPending}
                 >
-                    Send
+                    {isPending ? 'Sending' : 'Send'}
                 </Button>
             </form>
         </>

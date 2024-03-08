@@ -27,6 +27,8 @@ export default function EditProfile() {
     const [isEmail, setEmail] = useState(true);
     const [isPassword, setPassword] = useState(true);
     const [isImage, setImage] = useState(true);
+    const [isPending, setPending] = useState(false);
+    const [usernameMessage, setUsernameMessage] = useState(null);
 
     const handleSubmit = (e) => {
         setMessage();
@@ -34,11 +36,18 @@ export default function EditProfile() {
         setEmail(true);
         setPassword(true);
         setImage(true);
+        setUsernameMessage(null);
         e.preventDefault();
         let isAllGood = true;
         if (usernameRef.current.value.length < 3 || usernameRef.current.value.length > 20) {
             isAllGood = false;
             setUsername(false);
+            setUsernameMessage('Username must be at least 3 and less than 20 characters');
+        }
+        if (!usernameRef.current.value.match(/^[a-zA-Z0-9]*$/)) {
+            isAllGood = false;
+            setUsername(false);
+            setUsernameMessage('Only characters A-z and numbers 0-9');
         }
         if (
             !emailRef.current.value.toLowerCase().match(
@@ -64,6 +73,7 @@ export default function EditProfile() {
             setImage(false);
         }
         if (isAllGood) {
+            setPending(true);
             const userPost = {
                 user: {
                     username: usernameRef.current.value,
@@ -74,6 +84,7 @@ export default function EditProfile() {
                 userPost.user.password = passwordRef.current.value;
             if (imageRef.current.value.length) userPost.user.image = imageRef.current.value;
             updateUser(token, userPost).then((response) => {
+                setPending(false);
                 if (Object.prototype.hasOwnProperty.call(response, 'errors')) setMessage(response);
                 else {
                     dispatch(setUserData(response));
@@ -116,12 +127,13 @@ export default function EditProfile() {
                         defaultValue={usernameInput}
                         onChange={() => {
                             setUsername(true);
+                            setUsernameMessage(null);
                             setMessage();
                         }}
                         style={{ width: 287 }}
                     />
                     {!isUsername ? (
-                        <ErrorP>Username must be at least 3 and less than 20 characters</ErrorP>
+                        <ErrorP>{usernameMessage}</ErrorP>
                     ) : message?.errors?.username ? (
                         <ErrorP>{message?.errors?.username}</ErrorP>
                     ) : null}
@@ -174,11 +186,12 @@ export default function EditProfile() {
                     {!isImage && <ErrorP>Avatar image must be URL</ErrorP>}
                 </label>
                 <Button
-                    classList="blue"
+                    classList={`blue ${isPending && 'disabled'}`}
                     style={{ width: 319, height: 40, marginTop: 21 }}
                     type="submit"
+                    disabled={isPending}
                 >
-                    Save
+                    {isPending ? 'Changing...' : 'Change'}
                 </Button>
             </form>
         </>
