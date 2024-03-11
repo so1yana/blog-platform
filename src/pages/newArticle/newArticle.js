@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { createArticle, updateArticle, getArticle } from '../../api';
 import Input from '../../components/input';
 import Button from '../../components/button';
@@ -26,7 +26,7 @@ const validateString = (string, min, max, isRequiered) => {
 export default function NewArticle() {
     const [pageData, setPageData] = useState(null);
     const { token, username } = useSelector((state) => state.userData);
-    const { state, pathname } = useLocation();
+    const { state } = useLocation();
     const navigate = useNavigate();
     const timeoutRef = useRef();
     const tagsRef = useRef();
@@ -42,12 +42,17 @@ export default function NewArticle() {
     const [descriptionMessage, setDescriptionMessage] = useState(null);
     const [bodyMessage, setBodyMessage] = useState(null);
     const [isPending, setPending] = useState(false);
+    const [isRedirecting, setRedirecting] = useState(false);
+    const [isButton, setButton] = useState(false);
     const params = useParams();
     const componentType = params?.slug ? 'update' : 'new';
 
     useEffect(() => {
         if (!state && params?.slug) {
             getArticle(params.slug).then((response) => {
+                if (response === 'Not Found') {
+                    navigate('/');
+                }
                 setPageData(response);
             });
         }
@@ -55,7 +60,7 @@ export default function NewArticle() {
 
     useEffect(() => {
         if (isPopup) {
-            if (popupMessage.includes('Article')) {
+            if (popupMessage?.props?.children[0]?.includes('Article')) {
                 const urlArticle = serverMessage.article.slug;
                 timeoutRef.current = setTimeout(() => navigate(`/article/${urlArticle}`), 5000);
             } else timeoutRef.current = setTimeout(() => setPopup(false), 5000);
@@ -122,23 +127,52 @@ export default function NewArticle() {
         if (!isAllGood) return;
         setPopup(false);
         setPending(true);
+        setButton(true);
         const request =
             componentType === 'new'
                 ? createArticle(token, requestBody)
                 : updateArticle(token, requestBody, params.slug);
         request.then((response) => {
+            setPending(false);
             setServerMessage(response);
             const responseWord = componentType === 'new' ? 'created' : 'updated';
             if (Object.prototype.hasOwnProperty.call(response, 'article')) {
-                setPopupMessage(`Article successfully ${responseWord}!\nRedirecting in 5 seconds`);
+                setPopupMessage(
+                    <span>
+                        {`Article successfully ${responseWord}!\nRedirecting in 5 seconds\n`}
+                        <div
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'space-around',
+                                alignContent: 'center',
+                                margin: 4,
+                            }}
+                        >
+                            <button className={classes['popup-button']} type="button">
+                                <Link to={`/article/${response.article.slug}`}>Redirect now</Link>
+                            </button>
+                            <button
+                                className={classes['popup-button']}
+                                type="button"
+                                onClick={() => {
+                                    setRedirecting(false);
+                                    setButton(false);
+                                    setPopup(false);
+                                }}
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </span>,
+                );
                 setPopupType('good');
                 setPopup(true);
+                setRedirecting(true);
             }
             if (response === 'Forbidden') {
                 setPopupMessage('Access forbidden.');
                 setPopupType('bad');
                 setPopup(true);
-                setPending(false);
             }
         });
     };
@@ -163,9 +197,7 @@ export default function NewArticle() {
         const { username: pageAuthor } = pageData?.article?.author || '.';
         if (!state && params?.slug) {
             if (pageAuthor && username && pageAuthor !== username) {
-                const pathArr = pathname.split('/');
-                const path = pathArr.slice(0, pathArr.length - 1).join('/');
-                navigate(path);
+                navigate('/');
             } else if (pageAuthor && username && pageAuthor === username) {
                 const page = pageData.article;
                 titleRef.current.value = page.title;
@@ -257,11 +289,11 @@ export default function NewArticle() {
                 </label>
                 <Button
                     type="submit"
-                    classList={`blue ${isPending && 'disabled'}`}
+                    classList={`blue ${isButton && 'disabled'}`}
                     style={{ alignSelf: 'start', height: 40, width: 319 }}
-                    disabled={isPending}
+                    disabled={isButton}
                 >
-                    {isPending ? 'Sending' : 'Send'}
+                    {isPending ? 'Sending' : isRedirecting ? 'Redirecting' : 'Send'}
                 </Button>
             </form>
         </>
