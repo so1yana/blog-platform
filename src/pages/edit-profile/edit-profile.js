@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { updateUser } from '../../api';
-import { setUserData } from '../../actions/api';
+import { setUser } from '../../reducers';
 import Popup from '../../components/popup';
 import Button from '../../components/button';
 import Input from '../../components/input';
@@ -72,6 +72,15 @@ export default function EditProfile() {
             isAllGood = false;
             setImage(false);
         }
+        if (
+            !passwordRef.current.value.length &&
+            usernameInput === usernameRef.current.value &&
+            emailInput === emailRef.current.value &&
+            imageInput === imageRef.current.value
+        ) {
+            isAllGood = false;
+            setMessage({ message: 'Nothing to update', type: 'bad' });
+        }
         if (isAllGood) {
             setPending(true);
             const userPost = {
@@ -87,7 +96,7 @@ export default function EditProfile() {
                 setPending(false);
                 if (Object.prototype.hasOwnProperty.call(response, 'errors')) setMessage(response);
                 else {
-                    dispatch(setUserData(response));
+                    dispatch(setUser(response));
                     navigate(
                         // eslint-disable-next-line max-len
                         `/profile?username=${response.user.username}&mail=${response.user.email}&img=${response.user.image}`,
@@ -100,12 +109,10 @@ export default function EditProfile() {
     };
 
     useEffect(() => {
-        let timeout;
-        if (message?.user) {
-            timeout = setTimeout(() => {
-                setMessage();
-            }, 5000);
-        }
+        const timeout = setTimeout(() => {
+            setMessage(null);
+        }, 5000);
+
         return () => {
             clearTimeout(timeout);
         };
@@ -115,6 +122,7 @@ export default function EditProfile() {
         <>
             {message?.user?.token && <Popup type="good">Updated!</Popup>}
             {message?.errors && <Popup type="bad">Error!</Popup>}
+            {message?.message && <Popup type={message.type}>{message.message}</Popup>}
             <form className={classes['edit-profile']} onSubmit={handleSubmit}>
                 <h2 className={classes['edit-profile__title']}>Edit profile</h2>
                 <label>

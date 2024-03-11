@@ -1,7 +1,7 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useCallback, useEffect } from 'react';
-import { clearToken, setUserData } from '../../actions/api';
+import { clearToken, setUser } from '../../reducers';
 import Button from '../button';
 import replaceImage from '../../assets/avatarDef.png';
 import classes from './header.module.scss';
@@ -26,7 +26,7 @@ export default function Header() {
             })
                 .then((response) => response.json())
                 .then((response) => {
-                    dispatch(setUserData(response));
+                    dispatch(setUser(response));
                 })
                 .catch((err) => console.log('abort', err));
         }
@@ -67,7 +67,10 @@ export default function Header() {
                         </button>
                         <Button
                             style={{ marginRight: 32, width: 109, height: 51, fontSize: 18 }}
-                            onClick={() => dispatch(clearToken())}
+                            onClick={() => {
+                                dispatch(clearToken());
+                                localStorage.removeItem('token');
+                            }}
                             classList="black transparent"
                         >
                             Log out
