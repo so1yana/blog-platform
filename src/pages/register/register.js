@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { token } from '../../actions/api';
+import { token } from '../../reducers';
 import Input from '../../components/input';
 import classes from './register.module.scss';
 
