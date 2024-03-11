@@ -52,7 +52,11 @@ function Article() {
                                 key={`${tag}${(Math.random() + 15) * (Math.random() + 15) * 123}`}
                                 className={articleClass.article__tag}
                             >
-                                {tag ? stripText(tag, 8) : ''}
+                                {tagList.length > 5
+                                    ? stripText(tag, 8)
+                                    : tag.length > 20
+                                      ? stripText(tag, 20)
+                                      : tag}
                             </p>
                         );
                     });
@@ -189,7 +193,13 @@ function Article() {
                                             </Popconfirm>
                                             <Link
                                                 to="edit"
-                                                state={{ title, body, description, tagList, slug }}
+                                                state={{
+                                                    title,
+                                                    body,
+                                                    description,
+                                                    tagList,
+                                                    slug,
+                                                }}
                                             >
                                                 <Button
                                                     classList="green transparent"
