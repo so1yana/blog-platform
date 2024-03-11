@@ -33,7 +33,7 @@
         "react/require-default-props": "off",
         "react/forbid-prop-types": "off",
         "react/jsx-filename-extension": ["error", { "extensions": [".js", ".jsx"] }],
-
+        "import/no-named-as-default": 0,
         "prefer-destructuring": "off",
         "react/no-find-dom-node": "off",
         "react/no-did-mount-set-state": "off",
@@ -45,7 +45,7 @@
         "jsx-a11y/label-has-associated-control": 0,
         "react/react-in-jsx-scope": "off",
         "react/prop-types": 0,
-        "indent": ["error", 4, { "SwitchCase": 1 }],
+        "indent": ["error", 4, { "SwitchCase": 1, "ignoredNodes": ["ConditionalExpression"] }],
         "prettier/prettier": "off",
         "linebreak-style": [0, "unix"],
         "quotes": ["error", "single"],
