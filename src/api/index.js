@@ -20,9 +20,9 @@ export const getArticle = async (slug, token = null) => {
     let options = { headers: { Authorization: `Token ${token}` } };
     if (!token) options = null;
     const result = await fetch(`https://blog.kata.academy/api/articles/${slug}`, options)
-        .then((response) => {
+        .then(async (response) => {
             if (response.status !== 200) {
-                const text = response.text();
+                const text = await response.text();
                 throw new Error(text);
             }
             return response.json();
