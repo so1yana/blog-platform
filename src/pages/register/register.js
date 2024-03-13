@@ -1,180 +1,170 @@
+/* eslint-disable no-unsafe-optional-chaining */
 import { Link, useNavigate } from 'react-router-dom';
-import { useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { token } from '../../reducers';
+import ErrorP from '../../components/error-paragraph';
 import Input from '../../components/input';
+import Button from '../../components/button';
 import classes from './register.module.scss';
 
 export default function Register() {
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({ mode: 'onBlur' });
+    const emailPattern =
+        // eslint-disable-next-line max-len
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@\\"]+)*)|(\\".+\\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const usernameRef = useRef();
-    const emailRef = useRef();
-    const passwordRef = useRef();
-    const rePasswordRef = useRef();
-    const agreeRef = useRef();
-    const [isUsername, setUsername] = useState(true);
-    const [isEmail, setEmail] = useState(true);
-    const [isPassword, setPassword] = useState(true);
-    const [isRePassword, setRePassword] = useState(true);
-    const [isAgree, setAgree] = useState(true);
-    const [message, setMessage] = useState('');
+    const [message, setMessage] = useState(null);
+    const [usernameMessage, setUsernameMessage] = useState(null);
+    const [emailMessage, setEmailMessage] = useState(null);
+    const [isPending, setPending] = useState(false);
+    useEffect(() => {
+        if (message?.username) setUsernameMessage(`Username ${message.username}`);
+        if (message?.email) setEmailMessage(`Email ${message.email}`);
+    }, [message]);
 
-    if (!isAgree) agreeRef.current.style.borderColor = 'red';
-    if (isAgree && agreeRef.current) agreeRef.current.style.borderColor = '#1890ff';
-    const handleSubmit = (e) => {
-        let isAllGood = true;
-        e.preventDefault();
-        if (usernameRef.current.value.length < 3 || usernameRef.current.value.length > 20) {
-            isAllGood = false;
-            setUsername(false);
-        }
-        if (
-            !emailRef.current.value.toLowerCase().match(
-                // eslint-disable-next-line max-len
-                /^(([^<>()[\]\\.,;:\s@\\"]+(\.[^<>()[\]\\.,;:\s@\\"]+)*)|(\\".+\\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-            )
-        ) {
-            isAllGood = false;
-            setEmail(false);
-        }
-        if (passwordRef.current.value.length < 6 || passwordRef.current.value.length > 40) {
-            isAllGood = false;
-            setPassword(false);
-        }
-        if (rePasswordRef.current.value.length < 6 || rePasswordRef.current.value.length > 40) {
-            isAllGood = false;
-            setRePassword('length');
-        } else if (rePasswordRef.current.value !== passwordRef.current.value) {
-            isAllGood = false;
-            setRePassword('match');
-        }
-        if (!agreeRef.current.checked) {
-            isAllGood = false;
-            setAgree(false);
-        }
-        if (isAllGood) {
-            const userPost = {
-                user: {
-                    username: usernameRef.current.value,
-                    email: emailRef.current.value,
-                    password: passwordRef.current.value,
-                },
-            };
-            fetch('https://blog.kata.academy/api/users', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(userPost),
-            })
-                .then((response) => response.json())
-                .then((response) => {
-                    console.log(response);
-                    if (Object.prototype.hasOwnProperty.call(response, 'errors'))
-                        setMessage(response);
-                    else {
-                        dispatch(token(response.user.token));
-                        localStorage.setItem('token', response.user.token);
-                        navigate('/1');
-                    }
-                });
-        }
+    const onSubmit = ({ username, email, password }) => {
+        if (usernameMessage || emailMessage) return;
+        setMessage(null);
+        setPending(true);
+        const userPost = {
+            user: {
+                username,
+                email,
+                password,
+            },
+        };
+        fetch('https://blog.kata.academy/api/users', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(userPost),
+        })
+            .then((response) => response.json())
+            .then((response) => {
+                setPending(false);
+                console.log(response);
+                if (Object.prototype.hasOwnProperty.call(response, 'errors'))
+                    setMessage(response.errors);
+                else {
+                    dispatch(token(response.user.token));
+                    localStorage.setItem('token', response.user.token);
+                    navigate('/1');
+                }
+            });
     };
+
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(onSubmit)}>
             <div className={classes['register-page']}>
                 <h2 className={classes['register-page__title']}>Create new account</h2>
                 <label>
                     Username
                     <Input
                         style={{ width: 320 - 32 }}
-                        ref={usernameRef}
-                        name="username"
-                        type="text"
                         placeholder="Username"
-                        onChange={() => setUsername(true)}
-                        autoFocus
+                        {...register('username', {
+                            required: 'Required field',
+                            minLength: {
+                                value: 3,
+                                message: 'Username must be at least 3 characters',
+                            },
+                            maxLength: {
+                                value: 20,
+                                message: 'Username must be less than 40 characters',
+                            },
+                            onChange: () => setUsernameMessage(null),
+                        })}
                     />
-                    {!isUsername ? (
-                        <p className={classes['register-page__error-message']}>
-                            Username must be at least 3 and less than 20 characters
-                        </p>
-                    ) : message?.errors?.username ? (
-                        <p className={classes['register-page__error-message']}>
-                            {message?.errors?.username}
-                        </p>
-                    ) : null}
+                    {errors?.username ? (
+                        <ErrorP>{errors?.username?.message || 'Error'}</ErrorP>
+                    ) : (
+                        <ErrorP>{usernameMessage}</ErrorP>
+                    )}
                 </label>
                 <label>
                     Email address
                     <Input
                         style={{ width: 320 - 32 }}
-                        ref={emailRef}
-                        name="email"
-                        type="text"
                         placeholder="Email address"
-                        onChange={() => setEmail(true)}
+                        {...register('email', {
+                            required: 'Required field',
+                            pattern: {
+                                value: emailPattern,
+                                message: 'Write correct email. Example: username@example.com',
+                            },
+                            onChange: () => setEmailMessage(null),
+                        })}
                     />
-                    {!isEmail ? (
-                        <p className={classes['register-page__error-message']}>
-                            Write correct email. Example: example@gmail.com
-                        </p>
-                    ) : message?.errors?.email ? (
-                        <p className={classes['register-page__error-message']}>
-                            {message?.errors?.email}
-                        </p>
-                    ) : null}
+                    {errors?.email ? (
+                        <ErrorP>{errors?.email?.message || 'Error'}</ErrorP>
+                    ) : (
+                        <ErrorP>{emailMessage}</ErrorP>
+                    )}
                 </label>
                 <label>
                     Password
                     <Input
                         style={{ width: 320 - 32 }}
-                        ref={passwordRef}
-                        name="password"
                         type="password"
                         placeholder="Password"
-                        onChange={() => setPassword(true)}
+                        {...register('password', {
+                            required: 'Required field',
+                            minLength: {
+                                value: 6,
+                                message: 'Password must be at least 6 characters',
+                            },
+                            maxLength: {
+                                value: 40,
+                                message: 'Password must be less than 40 characters',
+                            },
+                        })}
                     />
-                    {!isPassword && (
-                        <p className={classes['register-page__error-message']}>
-                            Password must be at least 6 and less than 40 characters
-                        </p>
-                    )}
+                    {errors?.password && <ErrorP>{errors?.password?.message || 'Error'}</ErrorP>}
                 </label>
                 <label>
                     Repeat password
                     <Input
                         style={{ width: 320 - 32 }}
-                        ref={rePasswordRef}
-                        name="repeat-password"
                         type="password"
                         placeholder="Password"
-                        onChange={() => setRePassword(true)}
+                        {...register('repeatPassword', {
+                            required: 'Required field',
+                            validate: (curr, { password }) => {
+                                return curr === password || 'Password mismatch';
+                            },
+                        })}
                     />
-                    {isRePassword === 'length' ? (
-                        <p className={classes['register-page__error-message']}>
-                            Password must be at least 6 and less than 40 characters
-                        </p>
-                    ) : isRePassword === 'match' ? (
-                        <p className={classes['register-page__error-message']}>
-                            RePassword should be match with password
-                        </p>
-                    ) : null}
+                    {errors?.repeatPassword && (
+                        <ErrorP>{errors?.repeatPassword?.message || 'Error'}</ErrorP>
+                    )}
                 </label>
                 <hr className={classes['register-page__line']} />
-                <label className={`${classes['register-page__agree']}`} htmlFor="agree">
+                <label className={`${classes['register-page__agree']}`} htmlFor="isAgree">
                     <input
-                        ref={agreeRef}
-                        id="agree"
+                        id="isAgree"
                         type="checkbox"
-                        onChange={() => setAgree(true)}
+                        {...register('isAgree', { required: 'Required field' })}
+                        style={
+                            errors?.isAgree ? { borderColor: 'red' } : { borderColor: '#1890ff' }
+                        }
                     />
                     I agree to the processing of my personal information
                 </label>
-                <button className={classes['register-page__button']} type="submit">
+                <Button
+                    style={{ width: 319, height: 40, marginTop: 21, marginBottom: 12 }}
+                    classList={`blue ${isPending && 'disabled'}`}
+                    type="submit"
+                >
                     Create
-                </button>
+                </Button>
                 <p className={classes['register-page__signin']}>
                     Already have an account?{' '}
                     <Link style={{ display: 'inline' }} to="/login">

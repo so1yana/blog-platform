@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useForm, useFieldArray } from 'react-hook-form';
 import { createArticle, updateArticle, getArticle } from '../../api';
 import Input from '../../components/input';
 import Button from '../../components/button';
@@ -8,55 +9,76 @@ import Popup from '../../components/popup';
 import ErrorP from '../../components/error-paragraph';
 import classes from './newArticle.module.scss';
 
-const validateString = (string, min, max, isRequiered) => {
-    let resultMessage = null;
-    if (string.trim().length >= 1 && string.trim().length < min) {
-        resultMessage = `Length must be at least ${min} characters`;
-    }
-    if (string.length > max) {
-        resultMessage = `Length must be less than ${max} characters`;
-    }
-    if (string.trim().length === 0 && isRequiered) {
-        resultMessage = 'Field is required';
-    }
-
-    return resultMessage;
-};
-
 export default function NewArticle() {
-    const [pageData, setPageData] = useState(null);
-    const { token, username } = useSelector((state) => state.userData);
-    const { state } = useLocation();
-    const navigate = useNavigate();
+    const getUserData = (state) => state.userData;
     const timeoutRef = useRef();
-    const tagsRef = useRef();
-    const titleRef = useRef();
-    const descriptionRef = useRef();
-    const bodyRef = useRef();
-    const [serverMessage, setServerMessage] = useState(null);
-    const [tags, setTags] = useState(state?.tagList?.length ? state.tagList : ['']);
-    const [isPopup, setPopup] = useState(false);
-    const [popupMessage, setPopupMessage] = useState(null);
-    const [popupType, setPopupType] = useState('bad');
-    const [titleMessage, setTitleMessage] = useState(null);
-    const [descriptionMessage, setDescriptionMessage] = useState(null);
-    const [bodyMessage, setBodyMessage] = useState(null);
-    const [isPending, setPending] = useState(false);
-    const [isRedirecting, setRedirecting] = useState(false);
-    const [isButton, setButton] = useState(false);
+    const { username, token } = useSelector(getUserData);
+    const { state } = useLocation();
+    const [pageData, setPageData] = useState(null);
+    const navigate = useNavigate();
     const params = useParams();
     const componentType = params?.slug ? 'update' : 'new';
+    const [isPending, setPending] = useState(false);
+    const [isPopup, setPopup] = useState(false);
+    const [isButton, setButton] = useState(false);
+    const [isRedirecting, setRedirecting] = useState(false);
+    const [popupMessage, setPopupMessage] = useState(null);
+    const [popupType, setPopupType] = useState(null);
+    const [serverMessage, setServerMessage] = useState(null);
+    const {
+        control,
+        register,
+        setValue,
+        formState: { errors },
+        handleSubmit,
+    } = useForm({
+        mode: 'onChange',
+    });
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: 'Tags',
+        rules: { required: true, maxLength: 10, minLength: 1 },
+    });
+
+    const removeItem = (index) => {
+        if (fields.length < 2) return;
+        remove(index);
+    };
 
     useEffect(() => {
-        if (!state && params?.slug) {
+        if (!state && componentType === 'update') {
             getArticle(params.slug).then((response) => {
                 if (response === 'Not Found') {
                     navigate('/');
                 }
                 setPageData(response);
             });
-        }
+        } else if (state && componentType === 'update') {
+            const tags = state?.tagList || [];
+            setValue('title', state.title);
+            setValue('description', state.description);
+            setValue('body', state.body);
+            if (tags?.length) {
+                tags.map((tag) => append({ value: tag }));
+            } else append({ value: '' });
+        } else if (componentType === 'new') append({ value: '' });
     }, []);
+
+    useEffect(() => {
+        const pageAuthor = pageData?.article?.author?.username || null;
+        if (!state && params?.slug) {
+            if (pageAuthor === username && pageAuthor && username) {
+                const page = pageData.article;
+                const tags = page?.tagList || [];
+                setValue('title', page.title);
+                setValue('description', page.description);
+                setValue('body', page.body);
+                if (tags?.length) {
+                    tags.map((tag) => append({ value: tag }));
+                } else append({ value: '' });
+            } else if (pageAuthor && username && pageAuthor !== username) navigate('/');
+        }
+    }, [username, pageData]);
 
     useEffect(() => {
         if (isPopup) {
@@ -70,68 +92,38 @@ export default function NewArticle() {
         };
     }, [isPopup]);
 
-    const addTag = () => {
-        if (tags.length >= 10) {
-            if (!isPopup) {
-                setPopup(true);
-                setPopupMessage('You cannot add more than 10 tags');
-            }
-            return;
-        }
-        setTags([...tags, '']);
+    const handleTextAreaInput = (event) => {
+        const scrollLeft =
+            window.scrollX ||
+            (document.documentElement || document.body.parentNode || document.body).scrollLeft;
+        const scrollTop =
+            window.scrollY ||
+            (document.documentElement || document.body.parentNode || document.body).scrollTop;
+        const textarea = event?.target || event.current;
+
+        textarea.style.height = 'auto';
+        textarea.style.height = `${textarea.scrollHeight - 32}px`;
+
+        window.scrollTo(scrollLeft, scrollTop);
     };
 
-    const changeTag = (index, value) => {
-        const tagsCopy = [...tags];
-        const newTags = [...tagsCopy.slice(0, index), value, ...tagsCopy.slice(index + 1)];
-        setTags(newTags);
-    };
-
-    const deleteTag = (index) => {
-        if (tags.length === 1) {
-            setPopup(true);
-            setPopupMessage('You cannot delete this input');
-            return;
-        }
-        const tagsCopy = [...tags];
-        const newTags = [...tagsCopy.slice(0, index), ...tagsCopy.slice(index + 1)];
-        setTags(newTags);
-    };
-
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        const title = titleRef.current;
-        const description = descriptionRef.current;
-        const body = bodyRef.current;
-        const validateTitle = validateString(title.value, 3, 100, true);
-        const validateDescription = validateString(description.value, 3, 100, true);
-        const validateBody = validateString(body.value, 3, 20000, true);
-        const isAllGood = !validateTitle && !validateDescription && !validateBody;
-        setTitleMessage(validateTitle);
-        setDescriptionMessage(validateDescription);
-        setBodyMessage(validateBody);
-        const tagsArray = tags.filter((tag) => {
-            let isReturn = false;
-            const normalizedTag = tag.trim();
-            if (normalizedTag.length) isReturn = true;
-            return isReturn;
-        });
+    const onSubmit = ({ title, body, description, Tags }) => {
+        const tagList = Tags.map((tag) => tag.value);
         const requestBody = {
             article: {
-                title: title.value,
-                description: description.value,
-                body: body.value,
+                title,
+                description,
+                body,
+                tagList,
             },
         };
-        if (tagsArray.length) requestBody.article.tagList = tagsArray;
-        if (!isAllGood) return;
-        setPopup(false);
-        setPending(true);
-        setButton(true);
         const request =
             componentType === 'new'
                 ? createArticle(token, requestBody)
                 : updateArticle(token, requestBody, params.slug);
+        setPopup(false);
+        setPending(true);
+        setButton(true);
         request.then((response) => {
             setPending(false);
             setServerMessage(response);
@@ -177,107 +169,88 @@ export default function NewArticle() {
         });
     };
 
-    const handleTextAreaInput = (event) => {
-        setBodyMessage(null);
-        const scrollLeft =
-            window.scrollX ||
-            (document.documentElement || document.body.parentNode || document.body).scrollLeft;
-        const scrollTop =
-            window.scrollY ||
-            (document.documentElement || document.body.parentNode || document.body).scrollTop;
-        const textarea = event?.target || event.current;
-
-        textarea.style.height = 'auto';
-        textarea.style.height = `${textarea.scrollHeight - 32}px`;
-
-        window.scrollTo(scrollLeft, scrollTop);
-    };
-
-    useEffect(() => {
-        const { username: pageAuthor } = pageData?.article?.author || '.';
-        if (!state && params?.slug) {
-            if (pageAuthor && username && pageAuthor !== username) {
-                navigate('/');
-            } else if (pageAuthor && username && pageAuthor === username) {
-                const page = pageData.article;
-                titleRef.current.value = page.title;
-                descriptionRef.current.value = page.description;
-                bodyRef.current.value = page.body;
-                setTags(page.tagList.length ? page.tagList : ['']);
-                handleTextAreaInput(bodyRef);
-            }
-        }
-    }, [pageData, username]);
-
     return (
         <>
             {isPopup && <Popup type={popupType}>{popupMessage}</Popup>}
-            <form className={classes['new-article']} onSubmit={handleSubmit}>
+            <form className={classes['new-article']} onSubmit={handleSubmit(onSubmit)}>
                 <h2 className={classes['new-article__title']}>
                     {componentType === 'update' ? 'Edit article' : 'Create new article'}
                 </h2>
                 <label style={{ width: '100%' }}>
                     <span>Title</span>
                     <Input
-                        defaultValue={state?.title || ''}
-                        ref={titleRef}
                         placeholder="Title"
                         style={{ width: 842, height: 8 }}
-                        onChange={() => setTitleMessage(null)}
+                        {...register('title', { required: 'Field is required' })}
                     />
-                    {titleMessage && <ErrorP>{titleMessage}</ErrorP>}
+                    {errors?.title && <ErrorP>{errors?.title?.message || 'Error'}</ErrorP>}
                 </label>
                 <label>
                     <span>Short description</span>
                     <Input
-                        defaultValue={state?.description || ''}
-                        ref={descriptionRef}
                         placeholder="Short description"
                         style={{ width: 842, height: 8 }}
-                        onChange={() => setDescriptionMessage(null)}
+                        {...register('description', { required: 'Field is required' })}
                     />
-                    {descriptionMessage && <ErrorP>{descriptionMessage}</ErrorP>}
+                    {errors?.description && (
+                        <ErrorP>{errors?.description?.message || 'Error'}</ErrorP>
+                    )}
                 </label>
                 <label>
                     <span>Text</span>
                     <textarea
-                        defaultValue={state?.body || ''}
-                        ref={bodyRef}
                         className={classes.textarea}
                         placeholder="Text"
-                        onChange={handleTextAreaInput}
-                        onFocus={handleTextAreaInput}
                         autoFocus
+                        {...register('body', {
+                            required: 'Field is required',
+                            onChange: handleTextAreaInput,
+                            onBlur: handleTextAreaInput,
+                            onFocus: handleTextAreaInput,
+                        })}
                     />
-                    {bodyMessage && <ErrorP>{bodyMessage}</ErrorP>}
+                    {errors?.body && <ErrorP>{errors?.body?.message || 'Error'}</ErrorP>}
                 </label>
-                <label ref={tagsRef} style={{ alignSelf: 'start', marginBottom: 21 }}>
-                    <span>Tags</span>
-                    {tags.map((tag, index) => {
+                <label style={{ alignSelf: 'start', marginBottom: 21 }}>
+                    Tags
+                    {fields.map((item, index) => {
+                        const isItemWithError =
+                            typeof errors?.Tags === 'object' &&
+                            typeof errors?.Tags[index] === 'object';
+                        const inlineStyle = { marginRight: 17, width: 268 };
+                        if (isItemWithError) inlineStyle.outlineColor = 'red';
                         const element = (
                             <>
                                 <Input
-                                    style={{ marginRight: 17, width: 268 }}
-                                    placeholder="Tag"
-                                    value={tag}
-                                    onChange={(e) => changeTag(index, e.target.value)}
+                                    style={inlineStyle}
+                                    placeholder="tag"
+                                    {...register(`Tags.${index}.value`, {
+                                        required: 'Field is required',
+                                        pattern: {
+                                            value: /^[a-zа-яА-ЯA-Z0-9]+$/,
+                                            message: 'Only letters and digits w/o spaces',
+                                        },
+                                        maxLength: 25,
+                                        minLength: 2,
+                                    })}
                                 />
                                 <Button
                                     style={{ height: '100%', width: 118, marginRight: 17 }}
-                                    onClick={() => deleteTag(index)}
+                                    onClick={() => removeItem(index)}
                                     classList="red transparent"
                                 >
                                     Delete
                                 </Button>
                             </>
                         );
+
                         return (
-                            <div key={`tag${index + 2}`} className={classes['tag-container']}>
+                            <div key={item.id} className={classes['tag-container']}>
                                 {element}
-                                {index === tags.length - 1 && (
+                                {index === fields.length - 1 && (
                                     <Button
                                         style={{ height: '100%', width: 118 }}
-                                        onClick={() => addTag()}
+                                        onClick={() => append({ value: '' })}
                                         classList="blue transparent"
                                     >
                                         Add tag
