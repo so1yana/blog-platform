@@ -47,7 +47,7 @@ export const updateUser = async (token, body) => {
             }
             return response.json();
         })
-        .catch((err) => err.message);
+        .catch((err) => JSON.parse(err.message));
 
     return result;
 };
