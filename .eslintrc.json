@@ -40,6 +40,7 @@
         "react/no-unused-prop-types": "off",
         "react/jsx-one-expression-per-line": "off",
         "jsx-a11y/label-has-for": "off",
+        "react/jsx-props-no-spreading": "off",
 
         "react/state-in-constructor": 0,
         "jsx-a11y/label-has-associated-control": 0,
