@@ -3,6 +3,7 @@ import {
     RouterProvider,
     createRoutesFromElements,
     createBrowserRouter,
+    Navigate,
 } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { Tuple, configureStore } from '@reduxjs/toolkit';
@@ -22,7 +23,7 @@ const store = configureStore({ reducer, middleware: () => new Tuple(thunk) });
 
 const router = createBrowserRouter(
     createRoutesFromElements(
-        <Route path="/" element={<Layout />}>
+        <Route path="/" element={<Layout />} errorElement={<Navigate to="/1" />}>
             <Route
                 path="/:page?"
                 element={<BlogList />}
