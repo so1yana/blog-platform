@@ -54,7 +54,8 @@ export default function BlogList() {
                         >
                             {elems}
                             <Pagination
-                                defaultCurrent={Number(page) || 1}
+                                defaultCurrent={1}
+                                current={Number(page) || 1}
                                 total={articlesCount}
                                 pageSize={5}
                                 showSizeChanger={false}
