@@ -1,12 +1,10 @@
 /* eslint-disable max-len */
-// import { useEffect, useRef, useState } from 'react';
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { updateUser } from '../../api';
 import { setUser } from '../../reducers';
-// import { useEffect } from 'react';
 import Popup from '../../components/popup';
 import Button from '../../components/button';
 import Input from '../../components/input';
